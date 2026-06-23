@@ -1,0 +1,19 @@
+name: ci
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet build OpenAdoration.ApiBible.slnx --configuration Release
+      # Live tests are gated on APIBIBLE_KEY (unset here) → only the offline unit tests run.
+      - run: dotnet test OpenAdoration.ApiBible.slnx --configuration Release --no-build

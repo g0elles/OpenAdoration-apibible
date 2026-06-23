@@ -1,5 +1,7 @@
 # OpenAdoration — API.Bible Source plugin
 
+[![ci](https://github.com/g0elles/OpenAdoration-apibible/actions/workflows/ci.yml/badge.svg)](https://github.com/g0elles/OpenAdoration-apibible/actions/workflows/ci.yml)
+
 A **bring-your-own-key** Bible source for [OpenAdoration](https://github.com/g0elles/OpenAdoration).
 The church supplies its own [API.Bible](https://scripture.api.bible) key; this plugin fetches the
 versions that key can access and imports them into OpenAdoration's Bible library.
