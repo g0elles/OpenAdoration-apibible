@@ -25,11 +25,29 @@ The package contains only `manifest.json` + `OpenAdoration.Plugin.ApiBible.dll`.
 assembly (`OpenAdoration.Plugins.Abstractions`) is **not** bundled — the host shares it from its own
 load context so plugin/host types match. The build references a checked-in copy in `lib/` (no NuGet).
 
+## How it fetches
+
+- `GetAvailableVersionsAsync` → `GET /v1/bibles` (the versions your key can access).
+- `FetchAsync` → `/bibles/{id}` (metadata) → `/books` → per-book `/chapters` → per-chapter
+  `chapters/{id}?content-type=json`. Verses are read from each text node's explicit `attrs.verseId`
+  (no fragile in-text delimiter parsing). **Per-chapter** granularity keeps a whole-Bible sync under
+  the free-tier daily request cap (~1,250 requests/version). Progress reports verses fetched; the
+  request loop retries on HTTP 429 honoring `Retry-After`.
+- Book numbering follows the API's canonical order; Old/New Testament is derived from the 27 USFM
+  NT codes.
+
+## FUMS (Fair Use Management System)
+
+API.Bible returns a `meta.fumsToken` per request that its terms expect you to report. The plugin
+captures the token (logged) so it's never silently dropped. **Full reporting (POSTing the token to
+the FUMS endpoint) is account-specific and not yet wired** — see the `ReportFums` TODO. Complete it
+once your account confirms the reporting contract.
+
 ## Status
 
-- ✅ Phase B — repo scaffold: project, manifest, contract reference, packaging.
-- ⏳ Phase C — implement `GetAvailableVersionsAsync` / `FetchAsync` against scripture.api.bible
-  (`/bibles`, `/books`, `/chapters`, per-chapter text), report progress, honor FUMS.
+- ✅ Phase B — repo scaffold.
+- ✅ Phase C — versions + whole-Bible fetch implemented; parser unit-tested. Pending: a live run with
+  a real key, and full FUMS reporting.
 
 ## License
 
